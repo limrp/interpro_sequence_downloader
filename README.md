@@ -47,6 +47,18 @@ python3 interpro_downloader.py --input <input_file> --output <output_file> --err
 
 Replace `<input_file>`, `<output_file>`, and `<error_file>` with your actual file paths.
 
+To save the log messages:
+
+```bash
+python3 interpro_downloader.py --input <input_file> --output <output_file> --error <error_file> > <log_file> 2>&1 &
+```
+
+To watch the progression of your downloads:
+
+```bash
+tail -f <log_file>
+```
+
 ## Support
 
 For any issues or suggestions, please contact `limrod.15@gmail.com`.
