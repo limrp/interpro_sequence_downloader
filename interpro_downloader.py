@@ -97,7 +97,8 @@ def interpro_accession_classifier(accession_file: str) -> Dict[str, List[str]]:
 
 def interpro_api_sequence_downloader(db, accession, output_fasta, error_file):
 
-    BASE_URL = f"https://www.ebi.ac.uk:443/interpro/api/protein/UniProt/entry/all/{db}/{accession}/?page_size=200&extra_fields=sequence"
+    # BASE_URL = f"https://www.ebi.ac.uk:443/interpro/api/protein/UniProt/entry/all/{db}/{accession}/?page_size=200&extra_fields=sequence"
+    BASE_URL = f"https://www.ebi.ac.uk:443/interpro/api/protein/UniProt/entry/{db}/{accession}/?page_size=200&extra_fields=sequence"
 
     HEADER_SEPARATOR = "|"
     LINE_LENGTH = 80
