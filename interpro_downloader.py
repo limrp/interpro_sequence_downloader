@@ -49,14 +49,17 @@ def interpro_accession_classifier(accession_file: str) -> Dict[str, List[str]]:
 
     categories = {
             'cdd': [],
+            'cathgene3d': [],
             'InterPro': [],
             'ncbifam': [],
             'panther': [],
             'pfam': [],
+            'pirsf': [],
             'prints': [],
             'profile': [],
             'prosite': [],
-            'smart': []
+            'smart': [],
+            'ssf': []
             }
     
     with open(accession_file, mode = "r") as fh:
@@ -66,6 +69,8 @@ def interpro_accession_classifier(accession_file: str) -> Dict[str, List[str]]:
 
             if accession.startswith("cd"):
                 categories['cdd'].append(accession)
+            elif accession.startswith("G3DSA"):
+                categories['cathgene3d'].append(accession)
             elif accession.startswith("IPR"):
                 categories['InterPro'].append(accession)
             elif accession.startswith(("NF", "TIGR")):
@@ -74,14 +79,17 @@ def interpro_accession_classifier(accession_file: str) -> Dict[str, List[str]]:
                 categories['panther'].append(accession)
             elif accession.startswith("PF"):
                 categories['pfam'].append(accession)
+            elif accession.startswith("PIRSF"):
+                categories['pirsf'].append(accession)
             elif accession.startswith("PR"):
                 categories['prints'].append(accession)
             elif accession.startswith("PS"):
                 categories['prosite'].append(accession)
             elif accession.startswith("SM"):
                 categories['smart'].append(accession)
+            elif accession.startswith("SSF"):
+                categories['ssf'].append(accession)
             else:
-                # print(f"No category: {accession}")
                 pass
     
     return categories
