@@ -4,7 +4,7 @@
 # | PROGRAM NAME: Interpro Sequence Downloader
 # | DATE: 08/09/2023
 # | VERSION: 2
-# | CREATED BY: Lila Maciel Rodriguez Perez
+# | CREATED BY: Lila Maciel Rodriguez Perez using INTERPRO snippet
 # | PROJECT FILE: 
 # | GITHUB REPO: https://github.com/limrp/interpro_sequence_downloader
 # *--------------------------------------------------------------------------------------------------------
@@ -88,15 +88,6 @@ def interpro_accession_classifier(accession_file: str) -> Dict[str, List[str]]:
 
 
 def interpro_api_sequence_downloader(db, accession, output_fasta, error_file):
-    # Configure logging
-    # logging.basicConfig(
-    #     filename = 'api_script.log', level = logging.DEBUG, 
-    #     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    #     datefmt='%Y-%m-%d, %H:%M:%S'
-    #     )
-
-    # Creating an object 
-    # logger = logging.getLogger(__name__)
 
     BASE_URL = f"https://www.ebi.ac.uk:443/interpro/api/protein/UniProt/entry/all/{db}/{accession}/?page_size=200&extra_fields=sequence"
 
@@ -111,17 +102,11 @@ def interpro_api_sequence_downloader(db, accession, output_fasta, error_file):
     attempts = 0
     protein_count = ""
 
-    # Counter of sequences
+    # Counter of proteins
     c = 0
-
-    # Initialize an empty set to store seen sequences
-    seen_sequences = set()  
-    seen_ids = set()
 
     # while next is not null (None) or empty
     while next:
-        #c += 1
-        #print(f"$ Iteration number {c}")
 
         try:
             req = request.Request(next, headers={"Accept": "application/json"})
@@ -129,7 +114,6 @@ def interpro_api_sequence_downloader(db, accession, output_fasta, error_file):
 
             # If the API times out due a long running query
             if res.status == 408:
-                #print(f"Response status 408: The API timed out! Sleep a bit and continue.")
                 # wait just over a minute
                 sleep(61)
                 # then continue this loop with the same URL
@@ -153,20 +137,16 @@ def interpro_api_sequence_downloader(db, accession, output_fasta, error_file):
             attempts = 0
             # If this is the last page, i.e. next is null, update last_page flag
             if not next:
-                #print(f"value of next: {next}")
                 last_page = True
         
         except HTTPError as error:
-            #print(f"An HTTP Error!")
 
             if error.code == 408:
-                #print(f"HTTP Error 408!")
                 sleep(61)
                 continue
             else:
                 # If there is a different HTTP error, it wil re-try 3 times before failing
                 if attempts < 3:
-                    #print(f"An HTTP error different than 408! e: {error.code}. Starting attempt number {attempts}")
                     attempts += 1
                     sleep(61)
                     continue
@@ -202,9 +182,8 @@ def interpro_api_sequence_downloader(db, accession, output_fasta, error_file):
                                     ]
                                     ) + ")" for entry in entries]
                                     )
-                    #print(f"entries header: {entries_header}")
 
-                    # Increasing the counter
+                    # Increasing the counter of proteins
                     c += 1
                     print(f"# Result {c}: Protein {c}/{protein_count} for accession {accession}")
 
@@ -222,24 +201,6 @@ def interpro_api_sequence_downloader(db, accession, output_fasta, error_file):
                                         + item["metadata"]["name"] + "\n")
 
                 seq = item["extra_fields"]["sequence"]
-
-                # Checking for duplicated ID's and sequences
-                # if id in seen_ids:
-                #     print(f"Duplicate ID found for accession {item['metadata']['accession']}, {id}")
-                # else:
-                #     seen_ids.add(id)
-                
-                # # Checking for duplicated ID's
-                # if seq in seen_sequences:
-                #     # Print a message with the first 20 characters of the duplicate sequence
-                #     print(f"Duplicate sequence found for accession {item['metadata']['accession']}, {id}: {seq[:10]}...")
-                # else:
-                #     # Add the sequence to the set of seen sequences
-                #     seen_sequences.add(seq)
-                
-                # if (id in seen_ids and seq in seen_sequences):
-                #     print(f"Duplicate ID and sequence found for accession {item['metadata']['accession']}, {id}")
-                # Checking finished
 
                 fastaSeqFragments = [seq[0+i:LINE_LENGTH+i] for i in range(0, len(seq), LINE_LENGTH)]
                 
@@ -272,9 +233,6 @@ def main():
         # Exit the script gracefully
         exit()
 
-    # Giving credits to the interpro team for the main code snippet that retrieves data from the API
-    interpro_credits()
-
     # Classify accessions by database
     accessions_dict = interpro_accession_classifier(args.input)
 
@@ -284,6 +242,9 @@ def main():
             print(f"\n$ Accession number {i}: {accession} from the {db_key.upper()} database")
             interpro_api_sequence_downloader(db=db_key, accession=accession, output_fasta=args.output, error_file=args.error)
             print("\n")
+    
+    # Giving credits to the interpro team for the main code snippet that retrieves data from the API
+    interpro_credits()
 
 # Execute the main function only if the script is run directly (not imported as a module)
 if __name__ == "__main__":
