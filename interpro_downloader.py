@@ -249,7 +249,11 @@ def main():
     for db_key, accession_list in accessions_dict.items():
         for i, accession in enumerate(accession_list, start = 1):
             print(f"\n$ Accession number {i}: {accession} from the {db_key.upper()} database")
-            interpro_api_sequence_downloader(db=db_key, accession=accession, output_fasta=args.output, error_file=args.error)
+            interpro_api_sequence_downloader(db=db_key, 
+                                            accession=accession, 
+                                            output_fasta=args.output, 
+                                            error_file=args.error
+                                            )
             print("\n")
             
     print("*~~* Download finished *~~*")
